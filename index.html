@@ -311,20 +311,45 @@ make demo-quick   # Runs in < 2 minutes, no Docker required</code>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/asciinema-player/3.6.1/bundle/asciinema-player.min.js"></script>
     <script>
-        // Load the cast file - update path when hosting
-        AsciinemaPlayer.create(
-            'demo-quick.cast',
-            document.getElementById('player'),
-            {
-                cols: 100,
-                rows: 30,
-                autoPlay: false,
-                preload: true,
-                theme: 'dracula',
-                fit: 'width',
-                idleTimeLimit: 2
+        // Wait for DOM and script to load
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing asciinema player...');
+
+            // Check if player element exists
+            const playerElement = document.getElementById('player');
+            if (!playerElement) {
+                console.error('Player element not found!');
+                return;
             }
-        );
+
+            // Check if AsciinemaPlayer is loaded
+            if (typeof AsciinemaPlayer === 'undefined') {
+                console.error('AsciinemaPlayer library not loaded!');
+                playerElement.innerHTML = '<p style="color: #f85149; padding: 2rem;">Error: Failed to load asciinema player. Please check your internet connection.</p>';
+                return;
+            }
+
+            try {
+                // Try to create the player
+                AsciinemaPlayer.create(
+                    './demo-quick.cast',  // Explicit relative path
+                    playerElement,
+                    {
+                        cols: 100,
+                        rows: 30,
+                        autoPlay: false,
+                        preload: true,
+                        theme: 'dracula',
+                        fit: 'width',
+                        idleTimeLimit: 2
+                    }
+                );
+                console.log('Player initialized successfully!');
+            } catch (error) {
+                console.error('Error creating player:', error);
+                playerElement.innerHTML = '<p style="color: #f85149; padding: 2rem;">Error loading terminal recording: ' + error.message + '</p>';
+            }
+        });
     </script>
 </body>
 </html>
